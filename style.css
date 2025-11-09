@@ -1,5 +1,5 @@
 :root {
-  --img-src: url("images/zamirul-preview.png");
+  --img-src: url("images/dog1.png");
   --size: 300px;
   --depth: 16px;
 }
@@ -7,82 +7,50 @@
 body {
   margin: 0;
   height: 100vh;
+  background: radial-gradient(#1c5f54, #28447a);
   display: flex;
   justify-content: center;
   align-items: center;
-  background: radial-gradient(circle at center, #1c5f54, #28447a);
   perspective: 1000px;
 }
 
-.pillow {
+.stage {
   position: relative;
-  width: var(--size);
-  height: var(--size);
-  overflow: visible;
+}
+
+.pillow-wrap {
+  position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.5s ease;
+  transition: transform 0.1s linear;
+}
+
+.pillow {
+  width: 300px;
+  height: 300px;
+  border-radius: 30px;
+  position: relative;
+  transform-style: preserve-3d;
 }
 
 .texture {
   width: 100%;
   height: 100%;
-  background-image: var(--img-src);
+  background-image: url("images/dog1.png"); /* your image */
   background-size: cover;
   background-position: center;
-  transform: translateZ(var(--depth));
-  position: relative;
-  z-index: 2;
-  box-shadow: inset 0 0 25px rgba(255, 255, 255, 0.5);
+
+  backface-visibility: visible; /* keep visible when rotated */
 }
 
-.texture::before,
-.texture::after {
-  content: "";
+.floor-shadow {
   position: absolute;
-  top: 0;
-  width: var(--depth);
-  height: 100%;
-  background: #fff;
+  bottom: -20px;
+  left: 50%;
+  width: 250px;
+  height: 40px;
 
-  z-index: 1;
-  pointer-events: none;
-}
-
-.texture::before {
-  left: calc(-1 * var(--depth));
-  transform: rotateY(-15deg);
-}
-
-.texture::after {
-  right: calc(-1 * var(--depth));
-  transform: rotateY(15deg);
-}
-
-.pillow::before,
-.pillow::after {
-  content: "";
-  position: absolute;
-  left: 0px;
-  width: 100%;
-  height: var(--depth);
-  background: #fff;
-
-  z-index: 1;
-  pointer-events: none;
-}
-
-.pillow::before {
-  top: calc(-1 * var(--depth));
-  transform: rotateX(-15deg);
-}
-
-.pillow::after {
-  bottom: calc(-1 * var(--depth));
-  transform: rotateX(15deg);
-
-  z-index: -1;
-}
-
-.pillow:hover {
-  transform: rotateX(15deg) rotateY(15deg);
+  filter: blur(15px);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  transition: transform 0.2s ease;
 }

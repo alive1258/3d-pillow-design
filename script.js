@@ -1,22 +1,56 @@
 const pillow = document.getElementById("pillow");
 const shadow = document.querySelector(".floor-shadow");
 
+let isDragging = false;
+let previousX = 0;
+let rotationDirection = 0; // -1 = left, 1 = right
+let currentRotationY = 0;
+let spinInterval = null;
+
+document.addEventListener("mousedown", (e) => {
+  isDragging = true;
+  previousX = e.clientX;
+});
+
+document.addEventListener("mouseup", () => {
+  isDragging = false;
+  rotationDirection = 0;
+  clearInterval(spinInterval);
+  spinInterval = null;
+});
+
 document.addEventListener("mousemove", (e) => {
-  const { innerWidth, innerHeight } = window;
-  const x = e.clientX / innerWidth - 0.5;
-  const y = e.clientY / innerHeight - 0.5;
+  if (!isDragging) return;
 
-  const rotateY = x * 360;
-  const rotateX = y * -180;
+  const deltaX = e.clientX - previousX;
+  previousX = e.clientX;
 
-  pillow.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
+  // Determine direction
+  if (deltaX > 0) rotationDirection = 1; // right
+  else if (deltaX < 0) rotationDirection = -1; // left
+  else return;
 
-  // Scale shadow
-  const scale = 1 + Math.abs(x * 0.2);
-  shadow.style.transform = `translateX(-50%) scale(${scale})`;
+  // Start spinning if not already
+  if (!spinInterval) {
+    spinInterval = setInterval(() => {
+      currentRotationY += rotationDirection * 2; // rotation speed
+
+      if (currentRotationY > 360) currentRotationY -= 360;
+      if (currentRotationY < 0) currentRotationY += 360;
+
+      pillow.style.transform = `rotateY(${currentRotationY}deg)`;
+
+      // Shadow depth based on rotation
+      const scale =
+        1 + Math.abs(Math.sin((currentRotationY * Math.PI) / 180)) * 0.15;
+      shadow.style.transform = `translateX(-50%) scale(${scale})`;
+    }, 16); // ~60fps
+  }
 });
 
 document.addEventListener("mouseleave", () => {
-  pillow.style.transform = `rotateY(0deg) rotateX(0deg)`;
-  shadow.style.transform = `translateX(-50%) scale(1)`;
+  isDragging = false;
+  rotationDirection = 0;
+  clearInterval(spinInterval);
+  spinInterval = null;
 });

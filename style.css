@@ -1,0 +1,89 @@
+:root {
+  --img-src: url("images/zamirul-preview.png");
+  --size: 300px;
+  --depth: 20px; /* thickness of pillow edges */
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at center, #1c5f54, #28447a);
+  perspective: 1000px;
+}
+
+.pillow {
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50% / 50%;
+  overflow: visible;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+  box-shadow: inset -10px -10px 20px rgba(255, 255, 255, 0.3),
+    inset 10px 10px 20px rgba(0, 0, 0, 0.2), 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Main pillow surface */
+.texture {
+  width: 100%;
+  height: 100%;
+  background-image: var(--img-src);
+  background-size: cover;
+  background-position: center;
+  border-radius: 50% / 50%;
+  transform: translateZ(var(--depth));
+  box-shadow: inset 0 0 25px rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+/* Left and right curved edges using pseudo-elements */
+.texture::before,
+.texture::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: var(--depth);
+  height: 100%;
+  background: #fff;
+  border-radius: 50% / 50%;
+  box-shadow: inset 5px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.texture::before {
+  left: calc(-1 * var(--depth));
+  transform: rotateY(-10deg); /* slight tilt for depth */
+}
+
+.texture::after {
+  right: calc(-1 * var(--depth));
+  transform: rotateY(10deg);
+}
+
+/* Hover tilt effect */
+.pillow:hover {
+  transform: rotateX(10deg) rotateY(15deg);
+}
+
+/* Shadow under pillow */
+.pillow::after {
+  content: "";
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  width: 70%;
+  height: 30px;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0.45),
+    transparent 70%
+  );
+  filter: blur(10px);
+  z-index: -1;
+}
